@@ -1,0 +1,16 @@
+version: "3.4"
+
+services:
+    upload:
+        image: "cornellappdev/upload:${IMAGE_TAG}"
+        env_file: python.env
+        ports:
+            - "5000:5000"
+        deploy:
+            replicas: 1
+            update_config:
+                parallelism: 1
+                failure_action: rollback
+                order: start-first
+            restart_policy:
+                condition: any
