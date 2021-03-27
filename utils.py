@@ -31,18 +31,12 @@ def upload_image_helper(image_data, bucket_name):
         raise Exception(f"Extension {ext} not supported!")
 
     # secure way of generating random string for image name
-    salt = "".join(
-        random.SystemRandom().choice(string.ascii_lowercase + string.digits)
-        for _ in range(8)
-    )
+    salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
     # remove header of base64 string
     img_str = re.sub("^data:image/.+;base64,", "", image_data)
     img_data = base64.b64decode(img_str)
-    img = Image.open(BytesIO(img_data))
     img_filename = f"{salt}.{ext}"
-    img_temploc = f"{BASE_DIR}/{img_filename}"
-    img.save(img_temploc)
 
     session = boto3.session.Session()
     client = session.client(
@@ -53,11 +47,12 @@ def upload_image_helper(image_data, bucket_name):
         aws_secret_access_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
     )
 
-    client.put_object(
+    res = client.put_object(
         Bucket=bucket_name,
         Key=img_filename,
-        # Body=b"Does this work lol",
+        Body=BytesIO(img_data),
         ACL="public-read",
     )
+
     img_url = f"{os.environ['SPACES_ENDPOINT_URL']}/{bucket_name}/{img_filename}"
     return img_url

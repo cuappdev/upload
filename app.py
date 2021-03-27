@@ -2,7 +2,7 @@ import json
 
 from flask import Flask
 from flask import request
-from src.utils import success_response, failure_response, upload_image_helper
+from utils import success_response, failure_response, upload_image_helper
 import os
 
 app = Flask(__name__)
