@@ -11,7 +11,6 @@ import string
 import json
 
 EXTENSIONS = ["png", "gif", "jpg", "jpeg"]
-BASE_DIR = os.getcwd()
 BUCKET_NAMES = os.environ["BUCKET_NAMES"].split(",")
 
 
