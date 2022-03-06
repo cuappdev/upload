@@ -10,7 +10,7 @@ import re
 import string
 import json
 
-EXTENSIONS = ["png", "gif", "jpg", "jpeg"]
+# EXTENSIONS = ["png", "gif", "jpg", "jpeg"]
 BUCKET_NAMES = os.environ["BUCKET_NAMES"].split(",")
 
 
@@ -26,8 +26,8 @@ def upload_image_helper(image_data, bucket_name):
     if bucket_name not in BUCKET_NAMES:
         return None
     ext = guess_extension(guess_type(image_data)[0])[1:]
-    if ext not in EXTENSIONS:
-        raise Exception(f"Extension {ext} not supported!")
+    # if ext not in EXTENSIONS:
+    #     raise Exception(f"Extension {ext} not supported!")
 
     # secure way of generating random string for image name
     salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
