@@ -70,3 +70,23 @@ Response Body
 ```
 {"success": true, "data": "https://<spaces_name>.<spaces_region_name>.digitaloceanspaces.com/<bucket_name>/<filename>"}
 ```
+
+# **/remove/** • POST
+
+Request Body
+
+```
+{
+  "bucket": <bucket_name>,
+  "image_url": "https://<spaces_name>.<spaces_region_name>.digitaloceanspaces.com/<bucket_name>/<filename>"
+}
+```
+
+Response Body
+
+```
+{
+    "success": true,
+    "data": "Image successfully deleted!"
+}
+```
