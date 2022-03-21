@@ -55,3 +55,24 @@ def upload_image_helper(image_data, bucket_name):
 
     img_url = f"{os.environ['SPACES_ENDPOINT_URL']}/{bucket_name}/{img_filename}"
     return img_url
+
+def remove_image_helper(img_url, bucket_name):
+    session = boto3.session.Session()
+    client = session.client(
+        "s3",
+        region_name=os.environ["SPACES_REGION_NAME"],
+        endpoint_url=os.environ["SPACES_ENDPOINT_URL"],
+        aws_access_key_id=os.environ["SPACES_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
+    )
+    img_filename = img_url.split("/")[-1]
+    # Check if `img_filename` exists
+    try:
+        client.get_object(Bucket=bucket_name, Key=img_filename)
+    except Exception as e:
+        return None
+    res = client.delete_object(
+        Bucket=bucket_name,
+        Key=img_filename,
+    )
+    return res["ResponseMetadata"]["HTTPStatusCode"]
