@@ -27,6 +27,7 @@ def upload_image_helper(image_data, bucket_name):
     if bucket_name not in BUCKET_NAMES:
         return None
     mime_type = guess_type(image_data)[0]
+    ext = guess_extension(guess_type(image_data)[0])[1:]
     if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
         raise Exception(f"Extension {ext} not supported!")
 
