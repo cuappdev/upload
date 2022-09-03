@@ -11,6 +11,7 @@ import string
 import json
 
 # EXTENSIONS = ["png", "gif", "jpg", "jpeg"]
+ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 BUCKET_NAMES = os.environ["BUCKET_NAMES"].split(",")
 
 
@@ -25,6 +26,10 @@ def failure_response(message, code=404):
 def upload_image_helper(image_data, bucket_name):
     if bucket_name not in BUCKET_NAMES:
         return None
+    mime_type = guess_type(image_data)[0]
+    if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
+        raise Exception(f"Extension {ext} not supported!")
+
     ext = guess_extension(guess_type(image_data)[0])[1:]
     # if ext not in EXTENSIONS:
     #     raise Exception(f"Extension {ext} not supported!")
@@ -33,7 +38,7 @@ def upload_image_helper(image_data, bucket_name):
     salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
     # remove header of base64 string
-    img_str = re.sub("^data:image/.+;base64,", "", image_data)
+    img_str = re.sub("^.*?;base64,", "", image_data)
     img_data = base64.b64decode(img_str)
     img_filename = f"{salt}.{ext}"
 
@@ -55,6 +60,7 @@ def upload_image_helper(image_data, bucket_name):
 
     img_url = f"{os.environ['SPACES_ENDPOINT_URL']}/{bucket_name}/{img_filename}"
     return img_url
+
 
 def remove_image_helper(img_url, bucket_name):
     session = boto3.session.Session()
