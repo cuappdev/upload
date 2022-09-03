@@ -10,7 +10,6 @@ import re
 import string
 import json
 
-# EXTENSIONS = ["png", "gif", "jpg", "jpeg"]
 ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 BUCKET_NAMES = os.environ["BUCKET_NAMES"].split(",")
 
@@ -31,13 +30,10 @@ def upload_image_helper(image_data, bucket_name):
     if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
         raise Exception(f"Extension {ext} not supported!")
 
-    # if ext not in EXTENSIONS:
-    #     raise Exception(f"Extension {ext} not supported!")
-
     # secure way of generating random string for image name
     salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
-    # remove header of base64 string
+    # remove header of Base64 string
     img_str = re.sub("^.*?;base64,", "", image_data)
     img_data = base64.b64decode(img_str)
     img_filename = f"{salt}.{ext}"
