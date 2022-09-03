@@ -31,7 +31,6 @@ def upload_image_helper(image_data, bucket_name):
     if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
         raise Exception(f"Extension {ext} not supported!")
 
-    ext = guess_extension(guess_type(image_data)[0])[1:]
     # if ext not in EXTENSIONS:
     #     raise Exception(f"Extension {ext} not supported!")
 
