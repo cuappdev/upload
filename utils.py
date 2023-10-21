@@ -1,6 +1,5 @@
 import base64
 import boto3
-import datetime
 from io import BytesIO
 from mimetypes import guess_extension, guess_type
 import os
@@ -23,7 +22,9 @@ def failure_response(message, code=404):
 
 
 def upload_image_helper(image_data, bucket_name):
+    print(f"BUCKET_NAMES = {BUCKET_NAMES}")
     if bucket_name not in BUCKET_NAMES:
+        print("INVALID BUCKET")
         return None
     mime_type = guess_type(image_data)[0]
     ext = guess_extension(guess_type(image_data)[0])[1:]
@@ -36,7 +37,7 @@ def upload_image_helper(image_data, bucket_name):
     # remove header of Base64 string
     img_str = re.sub("^.*?;base64,", "", image_data)
     img_data = base64.b64decode(img_str)
-    img_filename = f"{salt}.{ext}"
+    img_filename = f"{salt}.{ext}" 
 
     session = boto3.session.Session()
     client = session.client(
