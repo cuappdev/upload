@@ -70,20 +70,13 @@ def upload_image_helper(bucket_name,image_data=None, file_data=None):
         aws_secret_access_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
     )
     
-    if file_data:
-        client.put_object(
-            Bucket=bucket_name,
-            Key=img_filename,
-            Body=file_data.read(),
-            ACL="public-read",
-        )
-    else:
-        client.put_object(
-            Bucket=bucket_name,
-            Key=img_filename,
-            Body=BytesIO(img_bytes),
-            ACL="public-read",
-        )
+    body = file_data.read() if file_data else BytesIO(img_bytes)
+    client.put_object(
+        Bucket=bucket_name,
+        Key=img_filename,
+        Body=body,
+        ACL="public-read",
+    )
 
     img_url = f"{os.environ['SPACES_ENDPOINT_URL']}/{bucket_name}/{img_filename}"
     return img_url
