@@ -35,7 +35,7 @@ def upload():
         return success_response(img_url, 201)
     else:
         bucket_name = request.form.get("bucket")
-        file = request.files.get("file")
+        file = request.files.get("image")
         image_data = None
         if file:
             img_url = upload_image_helper(file_data=file, bucket_name=bucket_name)

@@ -54,7 +54,7 @@ Response Body
 
 # **/upload/** • POST
 
-Images will be passed along as base64 encrypted strings, checkout [this converter](https://www.base64-image.de/) as the format we are using. You can send a POST request to this route and put an image and the bucket name in the form-data. Use `file` key for the image, and `bucket` key for the bucket name.
+Images will be passed along as base64 encrypted strings, checkout [this converter](https://www.base64-image.de/) as the format we are using. You can send a POST request to this route and put an image and the bucket name in the form-data. Use `image` key for the image, and `bucket` key for the bucket name.
 
 Request Body
 
