@@ -1,11 +1,18 @@
-import json
-
-from flask import Flask
-from flask import request
 import base64
-from utils import success_response, failure_response, upload_image_helper, remove_image_helper
+import json
 import os
+import random
+import re
+import string
+from io import BytesIO
+import boto3
+from mimetypes import guess_extension, guess_type
 
+from flask import Flask, request
+
+from utils import (failure_response, remove_image_helper, success_response,
+                   upload_image_helper)
+ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 app = Flask(__name__)
 
 
@@ -22,21 +29,20 @@ def upload():
         body = json.loads(request.data)
         bucket_name = body.get("bucket")  
         image_data = body.get("image")
+        img_url = upload_image_helper(image_data=image_data, bucket_name=bucket_name)
+        if img_url is None:
+            return failure_response("Could not upload image!") 
+        return success_response(img_url, 201)
     else:
         bucket_name = request.form.get("bucket")
-        print(f"bucket_name = {bucket_name}")
         file = request.files.get("file")
         image_data = None
-        if file:  
-            file_data = file.read()
-            image_data = base64.b64encode(file_data).decode()
+        if file:
+            img_url = upload_image_helper(file_data=file, bucket_name=bucket_name)
+            return success_response(img_url, 201)
         else: 
             return failure_response("No image file provided", 400)
-
-    img_url = upload_image_helper(image_data, bucket_name)
-    if img_url is None:
-        return failure_response("Could not upload image!") 
-    return success_response(img_url, 201)
+    
 
 @app.route("/remove/", methods=["POST"])
 def remove():
