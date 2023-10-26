@@ -44,16 +44,12 @@ def upload_image_helper(bucket_name,image_data=None, file_data=None):
     if bucket_name not in BUCKET_NAMES:
         return None
     # Guess the file type, depending on whether we have image data or file data
-    if image_data:
-        mime_type = guess_type(image_data)[0]
-        ext = guess_extension(guess_type(image_data)[0])[1:]
-        if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
-            raise Exception(f"Extension {ext} not supported!")
-    else:
-        mime_type = guess_type(file_data.filename)[0]
-        ext = guess_extension(mime_type)[1:]
-        if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
-            raise Exception(f"Extension {ext} not supported!")
+    to_guess = image_data if image_data else file_data.filename
+    mime_type = guess_type(to_guess)[0]
+    ext = guess_extension(mime_type)[1:]
+    if re.fullmatch(ALLOWED_MIME_TYPES_REGEX, mime_type) is None:
+        raise Exception(f"Extension {ext} not supported!")
+
     # secure way of generating random string for image name
     salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
     img_filename = f"{salt}.{ext}" 
