@@ -5,13 +5,14 @@ import random
 import re
 import string
 from io import BytesIO
-import boto3
 from mimetypes import guess_extension, guess_type
 
+import boto3
 from flask import Flask, request
 
 from utils import (failure_response, remove_image_helper, success_response,
                    upload_image_helper)
+
 ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 app = Flask(__name__)
 
