@@ -22,10 +22,10 @@ def failure_response(message, code=404):
     return json.dumps({"success": False, "error": message}), code
 
 
-def upload_image_helper(bucket_name,image_data=None, file_data=None):
+def upload_image_helper(bucket_name, image_data=None, file_data=None):
     """
     Function that uploads image data to s3 based on the bucket name and data.
-    
+
     Parameters
     ----
     bucket_name : str
@@ -36,7 +36,7 @@ def upload_image_helper(bucket_name,image_data=None, file_data=None):
     file_data: FileStore | None
     The file from the form-data of the user's HTML request, or None if it was
     passed in the request body instead.
-    
+
     Returns
     ----
     The image URL associated to the image that was uploaded to s3
@@ -52,10 +52,10 @@ def upload_image_helper(bucket_name,image_data=None, file_data=None):
 
     # secure way of generating random string for image name
     salt = "".join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
-    img_filename = f"{salt}.{ext}" 
-    
+    img_filename = f"{salt}.{ext}"
+
     # We won't use these if user uploaded file in form data
-    if image_data:
+    if not file_data:
         # remove header of Base64 string
         img_str = re.sub("^.*?;base64,", "", image_data)
         # get the decoded bytes of the base 64 image, or process FileStore object
@@ -69,7 +69,7 @@ def upload_image_helper(bucket_name,image_data=None, file_data=None):
         aws_access_key_id=os.environ["SPACES_ACCESS_KEY_ID"],
         aws_secret_access_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
     )
-    
+
     body = file_data.read() if file_data else BytesIO(img_bytes)
     client.put_object(
         Bucket=bucket_name,
