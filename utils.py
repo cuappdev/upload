@@ -8,7 +8,6 @@ from io import BytesIO
 from mimetypes import guess_extension, guess_type
 
 import boto3
-from PIL import Image
 
 ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 BUCKET_NAMES = os.environ["BUCKET_NAMES"].split(",")
