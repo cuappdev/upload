@@ -1,17 +1,9 @@
-import base64
 import json
 import os
-import random
-import re
-import string
-from io import BytesIO
-import boto3
-from mimetypes import guess_extension, guess_type
 
 from flask import Flask, request
+from utils import failure_response, remove_image_helper, success_response, upload_image_helper
 
-from utils import (failure_response, remove_image_helper, success_response,
-                   upload_image_helper)
 ALLOWED_MIME_TYPES_REGEX = "image/.+|application/pdf"
 app = Flask(__name__)
 
@@ -22,16 +14,16 @@ def hello_world():
 
 
 @app.route("/upload/", methods=["POST"])
-def upload(): 
+def upload():
     body = None
     # Check if they are using form-data or JSON body, handle accordingly
     if request.data:
         body = json.loads(request.data)
-        bucket_name = body.get("bucket")  
+        bucket_name = body.get("bucket")
         image_data = body.get("image")
         img_url = upload_image_helper(image_data=image_data, bucket_name=bucket_name)
         if img_url is None:
-            return failure_response("Could not upload image!") 
+            return failure_response("Could not upload image!")
         return success_response(img_url, 201)
     else:
         bucket_name = request.form.get("bucket")
@@ -40,15 +32,15 @@ def upload():
         if file:
             img_url = upload_image_helper(file_data=file, bucket_name=bucket_name)
             return success_response(img_url, 201)
-        else: 
+        else:
             return failure_response("No image file provided", 400)
-    
+
 
 @app.route("/remove/", methods=["POST"])
 def remove():
     body = json.loads(request.data)
     image_url = body.get("image_url")
-    bucket_name = body.get("bucket") 
+    bucket_name = body.get("bucket")
     if image_url is None or image_url == "":
         return failure_response("No URL to be found!")
     res = remove_image_helper(image_url, bucket_name)
@@ -57,6 +49,7 @@ def remove():
     elif res != 204:
         return failure_response("Could not delete image!")
     return success_response("Image successfully deleted!")
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
